@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sports Face Recognition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- W3.CSS & Fonts -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato|Montserrat">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+  <style>
+    body, h1, h2, h3, h4, h5, h6 { font-family: "Lato", sans-serif; }
+    .w3-bar, h1, button { font-family: "Montserrat", sans-serif; }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <header>
+    <div class="w3-top">
+      <div class="w3-bar w3-green w3-card w3-large">
+        <a href="{% url 'home' %}" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+      </div>
+    </div>
+
+    <div class="w3-container w3-green w3-center" style="padding:128px 16px">
+      <h1 class="w3-margin w3-jumbo">Sports Legends Identifier</h1>
+      <p class="w3-xlarge">Upload a face image and let AI do the rest!</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="w3-container w3-padding-64 w3-center hero">
+    <i class="fa fa-upload w3-text-green" style="font-size:80px;"></i>
+    <h2 class="w3-xxlarge">Upload Your Image</h2>
+
+    <form action="{% url 'home' %}" method="POST" enctype="multipart/form-data" class="w3-container w3-margin-top">
+      {% csrf_token %}
+      <div class="file-input">
+        <input type="file" name="image" id="file-input" accept="image/*" required>
+        <label for="file-input" id="file-label">Choose Image</label>
+        <button class="w3-button w3-green w3-padding-large w3-large" type="submit">Recognize Face</button>
+      </div>
+      <img id="preview" class="uploaded-img" hidden>
+    </form>
+
+    {% if prediction %}
+      <div class="w3-panel w3-pale-green w3-round w3-margin-top">
+        <h3>Prediction Result:</h3>
+        {% if file_url %}
+          <img src="{{ file_url }}" alt="Uploaded image" class="uploaded-img">
+        {% endif %}
+        <p class="w3-xlarge">{{ prediction }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Sample Gallery (Always Displayed) -->
+    <section class="w3-container w3-center gallery">
+      <h4>Sample Faces the Model Knows</h4>
+      <img src="{% static 'images/ronaldo.jpg' %}" alt="Ronaldo" class="sample-img">
+      <img src="{% static 'images/ms_dhoni.jpg' %}" alt="MS Dhoni" class="sample-img">
+      <img src="{% static 'images/lionel_messie.jpg' %}" alt="Lionel Messi" class="sample-img">
+      <img src="{% static 'images/virat_kohli_1.jpg' %}" alt="Virat Kohli" class="sample-img">
+      <img src="{% static 'images/roger_fedrer.jpg' %}" alt="Roger Federer" class="sample-img">
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-black w3-center w3-opacity w3-padding-32">
+    <h4>Quote of the Day</h4>
+    <p><em>"The more you sweat in training, the less you bleed in battle." – Richard Marcinko</em></p>
+    <p>Powered by W3.CSS & Django | © 2025</p>
+  </footer>
+
+  <!-- JavaScript for Image Preview -->
+  <script>
+    const input = document.getElementById('file-input');
+    const preview = document.getElementById('preview');
+    const label = document.getElementById('file-label');
+
+    input.addEventListener('change', function () {
+      if (input.files.length > 0) {
+        const file = input.files[0];
+        label.textContent = "Selected: " + file.name;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.hidden = false;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+</body>
+</html>
